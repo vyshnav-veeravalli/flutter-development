@@ -1,24 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-void main(){
-  runApp(ChangeNotifierProvider(
-    create: (_) => CounterModel(),
-    child: const myApp(),
-    ),
-  );
-}
-
-
-class CounterModel extends ChangeNotifier{
-  int _count=0;
-  int get count => _count;
-
-  void increment(){
-    _count++;
-    notifyListeners();
-  }
-}
+void main() => runApp(const myApp());
 
 class myApp extends StatelessWidget{
   const myApp({super.key});
@@ -26,50 +8,162 @@ class myApp extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Provider Demo',
-      theme: ThemeData(primarySwatch: Colors.deepOrange),
-      home: const ScreenOne(),
+      title: "edhi oka hatath parinaamam",
+      theme: ThemeData(primarySwatch: Colors.amber),
+      home: const MainScreen(),
+    );
+  } 
+}
+
+class MainScreen extends StatefulWidget{
+  const MainScreen({super.key});
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen>{
+  int currentIndex = 0;
+
+  final screens = [
+    const DashboradPage(),
+    const MessagePage(),
+    const SettingPage(),
+    const sailaja(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: screens[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        selectedItemColor: Colors.red,
+        unselectedItemColor: Colors.lightGreenAccent,
+        onTap: (index){
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'PALAKA'),
+          BottomNavigationBarItem(icon: Icon(Icons.message_rounded), label: 'SANDESAM'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "MARPULU CHERPULU"),
+          BottomNavigationBarItem(icon: Icon(Icons.local_activity), label: "SAILAJA"),
+        ],
+      ),
     );
   }
 }
 
-class ScreenOne extends StatelessWidget{
-  const ScreenOne({super.key});
 
+class DashboradPage extends StatelessWidget{
+  const DashboradPage({super.key});
   @override
   Widget build(BuildContext context) {
-    final counter = Provider.of<CounterModel>(context);
-    return Scaffold(
-      appBar: AppBar(title: const Text("rendu scrrenla counter"),),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Counter: ${counter.count}", style: const TextStyle(fontSize: 60),),
-            const SizedBox(height: 16,width: 60,),
-            ElevatedButton(onPressed: counter.increment, child: const Text("penchuraa pumka"),),
-            const SizedBox(height: 16, width: 60,),
-            ElevatedButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const ScreenTwo()),);
-            }, child: const Text("thadupari screen loki dhwaramu "),),],
+    return DefaultTabController(
+      length: 3, 
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Dashboard"),
+          bottom: const TabBar(tabs: [
+            Tab(text: "Overview"),
+            Tab(text: "Tasks"),
+            Tab(text: "progress"),
+          ],),
         ),
-      ),
+        body: const TabBarView(children: [
+          OverviewTab(),
+          TaskTab(),
+          ProgressTab(),
+        ],),
+      ),);
+  }
+}
+
+class OverviewTab extends StatelessWidget{
+  const OverviewTab({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 10,
+      padding: const EdgeInsets.all(18),
+      itemBuilder: (context, index) {
+        return Card(
+          child: ListTile(
+            leading: const Icon(Icons.person),
+            title: Text("User ${index + 1}"),
+            subtitle: const Text("overview data here..."),
+          ),
+        );
+      },
     );
   }
 }
 
-
-class ScreenTwo extends StatelessWidget{
-  const ScreenTwo({super.key});
-
+class TaskTab extends StatelessWidget{
+  const TaskTab({super.key});
   @override
   Widget build(BuildContext context) {
-    final counter = Provider.of<CounterModel>(context);
-    return Scaffold(
-      appBar: AppBar(title: const Text("rendova thera"),),
-      body: Center(
-        child: Text("Shared Counter: ${counter.count}", style: const TextStyle(fontSize: 28),),
+    return GridView.builder(
+      padding: const EdgeInsets.all(18),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 16,
       ),
+      itemCount: 6,
+      itemBuilder: (context, index){
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red.shade300,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Center(
+            child: Text("Task ${index+1}", style: const TextStyle(fontSize: 18),),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class ProgressTab extends StatelessWidget{
+  const ProgressTab({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text("Progress coming soon", style: TextStyle(fontSize: 120),),
+    );
+  }
+}
+
+class MessagePage extends StatelessWidget{
+  const MessagePage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text("SAMACHARAM", style: TextStyle(fontSize: 26),),),
+    );
+  }
+}
+
+class SettingPage extends StatelessWidget{
+  const SettingPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text("MARPULU CERPULU ekkada chebadunu", style: TextStyle(fontSize: 26),),),
+    );
+  }
+}
+
+class sailaja extends StatelessWidget{
+  const sailaja({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text("thanu naa bhaarya", style: TextStyle(fontSize: 30),),),
     );
   }
 }
